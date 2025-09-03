@@ -37,5 +37,6 @@ jobs:
             -e DST_REPO="${{ github.event.inputs.dst_repo }}" \
             -e HF_TOKEN="${{ secrets.HF_TOKEN }}" \
             -v "$(pwd)/run.sh:/app/run.sh" \
+            --entrypoint /bin/bash \
             ghcr.io/ggml-org/llama.cpp:full \
             ./run.sh
