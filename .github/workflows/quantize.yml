@@ -1,0 +1,41 @@
+name: Quantize Model
+
+on:
+  workflow_dispatch:
+    inputs:
+      model_name:
+        description: "Name of the model to quantize"
+        required: true
+        type: string
+      src_repo:
+        description: "Source repository URL"
+        required: true
+        type: string
+      dst_repo:
+        description: "Destination repository URL"
+        required: true
+        type: string
+
+jobs:
+  quantize:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Display inputs
+        run: |
+          echo "Model Name: ${{ github.event.inputs.model_name }}"
+          echo "Source Repo: ${{ github.event.inputs.src_repo }}"
+          echo "Destination Repo: ${{ github.event.inputs.dst_repo }}"
+
+      - name: Quantize model
+        run: |
+          docker run --rm -e MODEL_NAME="${{ github.event.inputs.model_name }}" \
+            -e SRC_REPO="${{ github.event.inputs.src_repo }}" \
+            -e DST_REPO="${{ github.event.inputs.dst_repo }}" \
+            -e HF_TOKEN="${{ secrets.HF_TOKEN }}" \
+            -v "$(pwd)/run.sh:/app/run.sh" \
+            ghcr.io/ggml-org/llama.cpp:full \
+            ./run.sh
